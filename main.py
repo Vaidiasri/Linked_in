@@ -1,8 +1,11 @@
 from fastapi import FastAPI
 import uvicorn
 import schema as schemas
+import model as models
+from database import engine
 
 app = FastAPI()
+models.Base.metadata.create_all(bind=engine)
 
 
 @app.get("/")
