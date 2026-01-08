@@ -19,8 +19,12 @@ def create_blog(request: blog_schema.Blog, db: Session = Depends(get_db)):
     return new_blog
 
 
-@router.get("/")
+@router.get("/blog")
 def get_all_blogs(db: Session = Depends(get_db)):
     """Saare blogs fetch karo"""
     blogs = db.query(blog_model.Blog).all()
     return blogs
+@router.get("/blog/{id}")
+def show(id:int,db:Session=Depends(get_db)):
+    blog=db.query(blog_model.Blog).filter(blog_model.Blog.id==id).first() # = = y tha = nahi 
+    return blog
