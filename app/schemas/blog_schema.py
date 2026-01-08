@@ -1,0 +1,8 @@
+from pydantic import BaseModel
+
+
+class Blog(BaseModel):
+    """Blog schema - request/response validation ke liye"""
+
+    title: str
+    body: str
