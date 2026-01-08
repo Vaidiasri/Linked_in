@@ -48,3 +48,24 @@ def destroy(id: int, db: Session = Depends(get_db)):
     db.delete(blog)
     db.commit()
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+@router.put("/{id}", status_code=status.HTTP_202_ACCEPTED)
+def update_blog(
+    id: int,
+    request: blog_schema.Blog,
+    db: Session = Depends(get_db)
+):
+    blog = db.query(blog_model.Blog).filter(blog_model.Blog.id == id)
+
+    if not blog.first():
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Blog with id {id} not found"
+        )
+
+    blog.update({
+        "title": request.title,
+        "body": request.body
+    })
+
+    db.commit()
+    return {"detail": "Blog updated successfully"}
