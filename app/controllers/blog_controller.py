@@ -1,32 +1,50 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Response, status
 from sqlalchemy.orm import Session
 
 from app.schemas import blog_schema
 from app.models import blog as blog_model
 from app.config.database import get_db
 
-# Router banao - saare blog related endpoints yahan rahenge
 router = APIRouter(prefix="/blog", tags=["Blog"])
 
-# post api for blogs 
+
+# POST api
 @router.post("/")
 def create_blog(request: blog_schema.Blog, db: Session = Depends(get_db)):
-    """Naya blog create karo"""
-    new_blog = blog_model.Blog(title=request.title, body=request.body)
+    new_blog = blog_model.Blog(
+        title=request.title,
+        body=request.body
+    )
     db.add(new_blog)
     db.commit()
     db.refresh(new_blog)
     return new_blog
 
-# get  api for all blog 
-@router.get("/blog")
+
+# GET all blogs
+@router.get("/")
 def get_all_blogs(db: Session = Depends(get_db)):
-    """Saare blogs fetch karo"""
     blogs = db.query(blog_model.Blog).all()
     return blogs
 
-# particular id k liye get api 
-@router.get("/blog/{id}")
-def show(id:int,db:Session=Depends(get_db)):
-    blog=db.query(blog_model.Blog).filter(blog_model.Blog.id==id).first() # = = y tha = nahi 
+
+# GET blog by id
+@router.get("/{id}")
+def show(id: int, response: Response, db: Session = Depends(get_db)):
+    blog = db.query(blog_model.Blog).filter(blog_model.Blog.id == id).first()
+    if not blog:
+        response.status_code = status.HTTP_404_NOT_FOUND
+        return {"detail": f"Blog with id {id} does not exist"}
     return blog
+
+
+# DELETE blog by id
+@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
+def destroy(id: int, db: Session = Depends(get_db)):
+    blog = db.query(blog_model.Blog).filter(blog_model.Blog.id == id).first()
+    if not blog:
+        return Response(status_code=status.HTTP_404_NOT_FOUND)
+
+    db.delete(blog)
+    db.commit()
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
