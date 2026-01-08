@@ -8,7 +8,7 @@ from app.config.database import get_db
 # Router banao - saare blog related endpoints yahan rahenge
 router = APIRouter(prefix="/blog", tags=["Blog"])
 
-
+# post api for blogs 
 @router.post("/")
 def create_blog(request: blog_schema.Blog, db: Session = Depends(get_db)):
     """Naya blog create karo"""
@@ -18,12 +18,14 @@ def create_blog(request: blog_schema.Blog, db: Session = Depends(get_db)):
     db.refresh(new_blog)
     return new_blog
 
-
+# get  api for all blog 
 @router.get("/blog")
 def get_all_blogs(db: Session = Depends(get_db)):
     """Saare blogs fetch karo"""
     blogs = db.query(blog_model.Blog).all()
     return blogs
+
+# particular id k liye get api 
 @router.get("/blog/{id}")
 def show(id:int,db:Session=Depends(get_db)):
     blog=db.query(blog_model.Blog).filter(blog_model.Blog.id==id).first() # = = y tha = nahi 
