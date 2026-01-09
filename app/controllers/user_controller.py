@@ -33,3 +33,17 @@ def creat_usser(request:user_schema.User,db:Session=Depends(get_db)):
     db.commit()
     db.refresh(new_user)
     return new_user
+# update  user
+@router.put('/{id}',status_code=status.HTTP_202_ACCEPTED,response_model=user_schema.User)
+def update_user(id:int, request:user_schema.User,db:Session=Depends(get_db)):
+    existing_user=db.query(user_model.User).filter(user_model.User.id == id).first()
+    if not existing_user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Bhai vo id exist nahi karti db m")
+    new_user=user_model.User(
+        user_password=request.user_password
+    ) 
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    return new_user   
+
