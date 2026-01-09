@@ -1,3 +1,4 @@
+from ast import Raise
 import select
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status, Response
@@ -47,3 +48,12 @@ def update_user(id:int, request:user_schema.User,db:Session=Depends(get_db)):
     db.refresh(new_user)
     return new_user   
 
+# Delete api 
+@router.delete("/{id}",status_code=status.HTTP_204_NO_CONTENT)
+def delete_user(id:int,db:Session=Depends(get_db)):
+    find=db.query(user_model.User).filter(user_model.User.id==id).first()
+    if not find:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Bhai aesi koi bhi id nahi hai")
+    db.delete(find)
+    db.commit()
+    return None
