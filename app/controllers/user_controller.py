@@ -1,3 +1,4 @@
+import select
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status, Response
 from sqlalchemy.orm import Session
@@ -13,3 +14,22 @@ router = APIRouter(prefix="/user", tags=["User"])
 def get_all_user(db: Session = Depends(get_db)):
     users = db.query(user_model.User).all()
     return users
+# post api 
+@router.post("/",status_code=status.HTTP_201_CREATED,response_model=List[user_schema.User])
+def creat_usser(request:user_schema.User,db:Session=Depends(get_db)):
+    existing_user=db.query(user_model.User).filter(user_model.User.user_email==request.user_email)
+    if existing_user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,detail="Email already registered"
+        )
+    new_user=user_model.User(
+        user_name=request.user_name,
+        user_email=request.user_email,
+        user_password=request.user_password
+        
+    )
+    
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    return new_user
