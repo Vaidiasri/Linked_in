@@ -1,9 +1,8 @@
 from fastapi import FastAPI
 import uvicorn
 
-from app.config.database import engine
-from app.models import blog
-from app.controllers import blog_router
+from app.config.database import engine, Base
+from app.controllers import blog_router, user_router
 
 # FastAPI app initialize karo
 app = FastAPI(
@@ -13,7 +12,7 @@ app = FastAPI(
 )
 
 # Database tables create karo
-blog.Base.metadata.create_all(bind=engine)
+Base.metadata.create_all(bind=engine)
 
 
 # Root endpoint
@@ -23,10 +22,10 @@ def root():
     return {"message": "This is my world"}
 
 
-# Blog router ko include karo
+# Controllers ko include karo
 app.include_router(blog_router)
+app.include_router(user_router)
 
 
-# Server start karo
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=9000)

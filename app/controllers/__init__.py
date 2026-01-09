@@ -1,3 +1,4 @@
 from .blog_controller import router as blog_router
+from .user_controller import router as user_router
 
-__all__ = ["blog_router"]
+__all__ = ["blog_router", "user_router"]

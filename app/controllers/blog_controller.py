@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, Response, status,HTTPException
 from sqlalchemy.orm import Session
+from typing import List
 
 from app.schemas import blog_schema
 from app.models import blog as blog_model
@@ -22,7 +23,7 @@ def create_blog(request: blog_schema.Blog, db: Session = Depends(get_db)):
 
 
 # GET all blogs
-@router.get("/")
+@router.get("/",status_code=status.HTTP_200_OK,response_model=List[blog_schema.Blog])
 def get_all_blogs(db: Session = Depends(get_db)):
     blogs = db.query(blog_model.Blog).all()
     return blogs
