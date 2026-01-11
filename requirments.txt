@@ -7,3 +7,4 @@ pydantic[email]==2.12.5
 pwdlib==0.3.0
 argon2-cffi==25.1.0
 python-dotenv==1.0.0
+python_jose
