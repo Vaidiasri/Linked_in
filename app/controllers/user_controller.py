@@ -55,3 +55,9 @@ def delete_user(id:int,db:Session=Depends(get_db)):
     db.delete(find)
     db.commit()
     return None
+@router.get("/{id}",status_code=status.HTTP_200_OK,response_model=user_schema.UserOut)
+def get_user(id:int,db:Session=Depends(get_db)):
+    user=db.query(user_model.User).filter(user_model.User.id==id).first()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Bhai aesi koi bhi id nahi hai")
+    return user
