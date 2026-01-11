@@ -1,4 +1,6 @@
 from pydantic import BaseModel, EmailStr
+from typing import List
+
 
 # user se jo liye vo
 
@@ -12,8 +14,9 @@ class User(BaseModel):
         from_attributes = True
 
 
-# jo user do dege vo
 class UserOut(BaseModel):
+    """User response"""
+    id: int
     user_name: str
     user_email: EmailStr
 
