@@ -1,10 +1,10 @@
 from pydantic import BaseModel, EmailStr
 
-class LoginSchema(BaseModel):
-    """Login ke liye schema"""
+class LoginRequest(BaseModel):
+    user_email: EmailStr
+    user_password: str
 
-    user_email: EmailStr 
-    user_password: str 
 
-    class Config:
-        from_attributes = True
+class LoginResponse(BaseModel):
+    message: str
+    user_id: int
