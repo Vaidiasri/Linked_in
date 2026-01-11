@@ -8,4 +8,4 @@ class Blog(BaseModel):
     body: str
 
     class Config:
-        from_attributes = True
+        orm_mode = True  # or: from_attributes = True  (Pydantic v2)

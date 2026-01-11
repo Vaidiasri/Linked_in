@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from app.config.database import get_db
 from app.schemas import user_schema
 from app.models import user as user_model
+from app.utils.hashpassword import get_password_hash  # Import the password hashing utility
 
 router = APIRouter(prefix="/user", tags=["User"])
 
@@ -26,7 +27,7 @@ def creat_usser(request:user_schema.User,db:Session=Depends(get_db)):
     new_user=user_model.User(
         user_name=request.user_name,
         user_email=request.user_email,
-        user_password=request.user_password
+        user_password=get_password_hash(request.user_password) # Hash the password before storing it
         
     )
     
@@ -40,13 +41,10 @@ def update_user(id:int, request:user_schema.User,db:Session=Depends(get_db)):
     existing_user=db.query(user_model.User).filter(user_model.User.id == id).first()
     if not existing_user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Bhai vo id exist nahi karti db m")
-    new_user=user_model.User(
-        user_password=request.user_password
-    ) 
-    db.add(new_user)
+    existing_user.user_password=get_password_hash(request.user_password)
     db.commit()
-    db.refresh(new_user)
-    return new_user   
+    db.refresh(existing_user)
+    return existing_user   
 
 # Delete api 
 @router.delete("/{id}",status_code=status.HTTP_204_NO_CONTENT)
