@@ -2,7 +2,7 @@ from fastapi import FastAPI
 import uvicorn
 
 from app.config.database import engine, Base
-from app.controllers import blog_router, user_router
+from app.controllers import blog_router, user_router, login_router
 
 # FastAPI app initialize karo
 app = FastAPI(
@@ -25,6 +25,7 @@ def root():
 # Controllers ko include karo
 app.include_router(blog_router)
 app.include_router(user_router)
+app.include_router(login_router)            
 
 
 if __name__ == "__main__":
